@@ -5,11 +5,22 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NeticoProject;
 using Repository;
+using Serilog;
+using Serilog.Events;
+using Service;
 using Service.AuthenService;
 using Service.OrderService;
 using Service.UserService;
 
+Log.Logger = new LoggerConfiguration().MinimumLevel.Information()
+                                      .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                                      .WriteTo.File("Log/log.txt",rollingInterval:RollingInterval.Day)
+                                      .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
@@ -40,7 +51,10 @@ builder.Services.AddSwaggerGen(c =>
                     }
                 });
 });
-builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddScoped<CustomerService>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<CategoryService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddScoped<IMD5Encrypt, MD5Encrypt>();
 builder.Services.AddTransient<IAuthenticate, Authenticate>();

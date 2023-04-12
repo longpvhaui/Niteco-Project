@@ -1,0 +1,17 @@
+D:\NitecoProject\NeticoProject\Repository\bin\Debug\net6.0\Repository.deps.json
+D:\NitecoProject\NeticoProject\Repository\bin\Debug\net6.0\Repository.runtimeconfig.json
+D:\NitecoProject\NeticoProject\Repository\bin\Debug\net6.0\Repository.dll
+D:\NitecoProject\NeticoProject\Repository\bin\Debug\net6.0\Repository.pdb
+D:\NitecoProject\NeticoProject\Repository\bin\Debug\net6.0\Domain.dll
+D:\NitecoProject\NeticoProject\Repository\bin\Debug\net6.0\Domain.pdb
+D:\NitecoProject\NeticoProject\Repository\obj\Debug\net6.0\Repository.csproj.AssemblyReference.cache
+D:\NitecoProject\NeticoProject\Repository\obj\Debug\net6.0\Repository.GeneratedMSBuildEditorConfig.editorconfig
+D:\NitecoProject\NeticoProject\Repository\obj\Debug\net6.0\Repository.AssemblyInfoInputs.cache
+D:\NitecoProject\NeticoProject\Repository\obj\Debug\net6.0\Repository.AssemblyInfo.cs
+D:\NitecoProject\NeticoProject\Repository\obj\Debug\net6.0\Repository.csproj.CoreCompileInputs.cache
+D:\NitecoProject\NeticoProject\Repository\obj\Debug\net6.0\Repository.csproj.CopyComplete
+D:\NitecoProject\NeticoProject\Repository\obj\Debug\net6.0\Repository.dll
+D:\NitecoProject\NeticoProject\Repository\obj\Debug\net6.0\refint\Repository.dll
+D:\NitecoProject\NeticoProject\Repository\obj\Debug\net6.0\Repository.pdb
+D:\NitecoProject\NeticoProject\Repository\obj\Debug\net6.0\Repository.genruntimeconfig.cache
+D:\NitecoProject\NeticoProject\Repository\obj\Debug\net6.0\ref\Repository.dll

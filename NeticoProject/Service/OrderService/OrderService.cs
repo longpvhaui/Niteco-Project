@@ -1,6 +1,8 @@
-﻿using Domain;
+﻿using Azure;
+using Domain;
 using Domain.ViewModel;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Repository;
 using System;
 using System.Collections.Generic;
@@ -14,41 +16,63 @@ namespace Service.OrderService
     public class OrderService : IOrderService
     {
         private readonly OrderManageDbContext _context;
-        public OrderService(OrderManageDbContext context)
+        private readonly ProductService _productService;
+        private readonly ILogger<OrderService> _logger;
+        public OrderService(OrderManageDbContext context, ProductService productService,ILogger<OrderService> logger)
         {
             _context = context;
+            _productService = productService;
+            _logger = logger;
         }
         public ServiceResponse<Order> CreateOrder(OrderManage order)
         {
             var response = new ServiceResponse<Order>();
-            var orders = GetAll();
-            var orderExist = orders.FirstOrDefault(x => x.Id == order.Id);
-            if (orderExist != null)
+            try
             {
-                response.Success = false;
-                response.Message = "Order already  exits";
-            }
-            else
-            {
+                
+                var orders = GetAll();
+                var products = _productService.GetAll();
+                var orderExist = orders.FirstOrDefault(x => x.Id == order.Id);
+                var product = products.FirstOrDefault(x => x.Id == order.ProductId);
+                if (orderExist != null)
+                {
+                    response.Success = false;
+                    response.Message = "Order already  exits";
+                }
+                if (product != null && product.Quantity < order.Amount)
+                {
+                    response.Success = false;
+                    response.Message = "There are not enough products";
+                }
+                else
+                {
 
-                var orderNew = new Order();
-                orderNew.CustomerId = order.CustomerId;
-                orderNew.ProductId = order.ProductId;
-                orderNew.Amount = order.Amount;
-                orderNew.OrderDate = DateTime.Now;
-                _context.Orders.Add(orderNew);
-                _context.SaveChanges();
-                response.Success = true;
-                response.Message = "Create order success";
-                response.Data = orderNew;
+                    var orderNew = new Order();
+                    orderNew.CustomerId = order.CustomerId;
+                    orderNew.ProductId = order.ProductId;
+                    orderNew.Amount = order.Amount;
+                    orderNew.OrderDate = DateTime.Now;
+                    _context.Orders.Add(orderNew);
+                    _context.SaveChanges();
+                    response.Success = true;
+                    response.Message = "Create order success";
+                    response.Data = orderNew;
+                }
+                return response;
+            }catch(Exception ex)
+            {
+                response.Success=false;
+                response.Message = ex.Message;
+                _logger.LogError(ex.Message);
+                return response;
             }
-            return response;
+
         }
         public IEnumerable<Order> GetAll()
         {
             var orders = _context.Orders
                         .Include(o => o.Customer)
-                        .Include(o => o.Product.Category);
+                        .Include(o => o.Product.Category).AsEnumerable();
             return orders;
         }
 

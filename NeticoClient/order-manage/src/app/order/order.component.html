@@ -1,33 +1,62 @@
 <div class="container">
      <h2>Order List</h2>
-     <button type="button" class="btn btn-success m-2 btn-add" data-bs-toggle="modal" data-bs-target="#modelUser"
-     (click)="addClick()" data-backdrop="static" data-keyboard="false"  data-toggle="tooltip" title="Thêm nhân viên">
-     <i class="bi bi-person-add"></i>
-   </button>
+     <form class="row g-3" #formSearch = "ngForm" (ngSubmit)="onSearch(formSearch)">
+  
+      <div class="col-md-5">
+          <label for="searchText" class="form-label">Search</label>
+          <input type="text" class="form-control" id="searchText" placeholder="Search name,product name" [(ngModel)]="searchText" name="searchText"> 
+      </div>
+     
+      
+  
+      <div class="col-12">
+          <button type="button" (click)="clearFilter(formSearch)" class="btn btn-primary m-2 btn-add " data-toggle="tooltip" title="Xóa filter"><i class="bi bi-x-circle"></i></button>
+        <button type="submit" class="btn btn-primary m-2 btn-add "  data-toggle="tooltip" title="Tìm kiếm"><i class="bi bi-search"></i></button>
+    
+        <button type="button" class="btn btn-success m-2 btn-add " data-bs-toggle="modal" data-bs-target="#modelUser"
+        (click)="addClick()" data-backdrop="static" data-keyboard="false"  data-toggle="tooltip" title="Create Order">
+        <i class="bi bi-plus-circle"></i>
+      </button>
+      
+      </div>
+    </form>
+
+
+     
      <table class="table">
        <thead>
          <tr>
-           <th>ID</th>
+           <th>No.</th>
            <th>Customer Name</th>
            <th>Product Name</th>
-           <th>Quantity</th>
-           <th>Price</th>
+           <th>Category Name</th>
+           <th>Amount</th>
+           <th>Order Date</th>
          </tr>
        </thead>
        <tbody>
-         <tr *ngFor="let order of orders">
-           <td>{{ order.id }}</td>
-           <td>{{ order.customerName }}</td>
-           <td>{{ order.productName }}</td>
-           <td>{{ order.quantity }}</td>
-           <td>{{ order.price }}</td>
+         <tr *ngFor="let order of orders | paginate: { itemsPerPage: pageSize, currentPage: currentPage, totalItems: totalItems }; let i = index">
+           <td>{{startIndex + i + 1 }}</td>
+           <td >{{ getCustomerName(order.customerId) }}</td>
+           <td >{{ getProductName(order.productId) }}</td>
+           <td >{{ getCategoryName(order.product.categoryId) }}</td>
+           <td>{{ order.amount }}</td>
+           <td>{{ order.orderDate | date:'dd/MM/yyyy hh:mm:ss ' }}</td>
  
          </tr>
        </tbody>
      </table>
-    
+     <div class="pagging">
+      <pagination-controls (pageChange)="changePage($event)"></pagination-controls>
+       <div>
+              <label>Items per page:</label>
+              <select [(ngModel)]="pageSize" style="margin-left: 10px;" (change)="onPageSizeChange(pageSize)">
+                  <option *ngFor="let option of pageSizeOptions" [value]="option">{{option}}</option>
+              </select>
+      </div> 
+      </div>
 
-     <div class="modal fade" id="modelUser" tabindex="-1" aria-labelledby="userModelTitle" aria-hidden="true" [ngClass]="{'show': showModal}">
+     <div class="modal fade" id="modelUser" tabindex="-1" aria-labelledby="userModelTitle" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
               <div class="modal-content">
                   <div class="modal-header">
@@ -36,24 +65,32 @@
                           (click)="closeClick()"></button>
                   </div>
                   <div class="modal-body">
-                    <form #orderForm="ngForm">
+                    <form #orderForm="ngForm" (ngSubmit)="onSubmit(orderForm)">
+                      <div class="form-group">
+                        <label for="inputCustomer" class="col-sm-2 col-form-label">Customer Name</label>
+                        <select  class="form-select" [(ngModel)]="customer" name="customerName" required>
+                            <option *ngFor="let customer of customers"   displayExpr="customer.name" [value]="customer.id">{{customer.name}}</option>
+                           
+                          </select>
+                      </div>
                          <div class="form-group">
-                           <label for="customerName">Customer Name:</label>
-                           <input type="text" class="form-control" id="customerName" name="customerName" required [(ngModel)]="newOrder.customerName">
+                          <label for="inputProduct" class="col-sm-2 col-form-label">Product Name</label>
+                          <select  class="form-select" [(ngModel)]="product" name="productName" required>
+                              <option *ngFor="let product of products "  displayExpr="product.name" [value]="product.id">{{product.name}}</option>
+                             
+                            </select>
                          </div>
                          <div class="form-group">
-                           <label for="productName">Product Name:</label>
-                           <input type="text" class="form-control" id="productName" name="productName" required [(ngModel)]="newOrder.productName">
+                           <label for="amount">Amount:</label>
+                           <input type="number" class="form-control" id="amount" name="amount" required [(ngModel)]="amount">
                          </div>
                          <div class="form-group">
-                           <label for="quantity">Quantity:</label>
-                           <input type="number" class="form-control" id="quantity" name="quantity" required [(ngModel)]="newOrder.quantity">
+                          <label for="orderDate" class="col-sm-2 col-form-label">Order Date</label>
+                          <input type="date" [(ngModel)]="orderDate" class="form-control" id="orderDate" name="orderDate">
+            
                          </div>
-                         <div class="form-group">
-                           <label for="price">Price:</label>
-                           <input type="number" class="form-control" id="price" name="price" required [(ngModel)]="newOrder.price">
-                         </div>
-                         <button type="submit" class="btn btn-primary">Submit</button>
+         
+                         <button type="submit" class="btn btn-primary submit-btn">Create</button>
                        </form>
   
   

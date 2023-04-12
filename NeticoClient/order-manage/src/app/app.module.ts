@@ -11,6 +11,7 @@ import { AuthGuardService, LoginService } from './service/login.service';
 import { JwtInterceptor } from './helpers/jwt.interceptor';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ErrorInterceptor } from './helpers/error.interceptor';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { ErrorInterceptor } from './helpers/error.interceptor';
     FormsModule,
     ToastrModule.forRoot(),
     ToastNoAnimationModule.forRoot(),
+    NgxPaginationModule,
     HttpClientModule
   ],
   providers: [

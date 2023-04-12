@@ -9,10 +9,12 @@ namespace NeticoProject
     {
         private readonly RequestDelegate _next;
         private readonly IConfiguration _configuration;
-        public JwtMiddleware(RequestDelegate next, IConfiguration configuration)
+        private readonly ILogger<JwtMiddleware> _logger;
+        public JwtMiddleware(RequestDelegate next, IConfiguration configuration,ILogger<JwtMiddleware> logger)
         {
             _next = next;
             _configuration = configuration;
+            _logger = logger;
         }
         public async Task Invoke(HttpContext context, IUserService userService)
         {
@@ -45,7 +47,8 @@ namespace NeticoProject
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex.Message);
+                
             }
         }
     }

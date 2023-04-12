@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { OrderComponent } from './order/order.component';
+import { AuthGuardService } from './service/login.service';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -12,6 +13,7 @@ const routes: Routes = [
   { 
   path: 'order', 
   component: OrderComponent,
+  canActivate: [ AuthGuardService ] 
 
 },];
 

@@ -40,7 +40,6 @@ export class LoginService {
         var url = `${environment.apiUrl}`+ '/api/Login/login';
         try{
         var res =  await this.http.post<any>(url, userLogin).toPromise();
-        debugger
         if(res.token){
                 this.user = res.user;
                 this.isAdmin = res.user.isAdmin;

@@ -1,6 +1,6 @@
 ﻿using Domain;
 using Domain.ViewModel;
-using Microsoft.AspNetCore.Authorization;
+using Infrastructure.Authorize;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.OrderService;
@@ -12,10 +12,11 @@ namespace NeticoProject.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
-
-        public OrderController(IOrderService orderService)
+        private readonly ILogger<OrderController> _logger;
+        public OrderController(IOrderService orderService, ILogger<OrderController> logger )
         {
             _orderService = orderService;
+            _logger = logger;
         }
 
         [Authorize]
@@ -23,8 +24,15 @@ namespace NeticoProject.Controllers
         [Route("get-all")]
         public IActionResult GetAll(int pageIndex, int pageSize)
         {
-            var response = _orderService.GetPagging(pageIndex, pageSize);
-            return Ok(response);
+            try
+            {
+                var response = _orderService.GetPagging(pageIndex, pageSize);
+                return Ok(response);
+            }catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
@@ -32,9 +40,15 @@ namespace NeticoProject.Controllers
         [Route("get-search")]
         public IActionResult GetPagging(SearchModel model)
         {
-
-            var response = _orderService.GetOrderSearch(model);
-            return Ok(response);
+            try
+            {
+                var response = _orderService.GetOrderSearch(model);
+                return Ok(response);
+            }catch(Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
@@ -42,21 +56,28 @@ namespace NeticoProject.Controllers
         [Route("create")]
         public IActionResult CreateOrder(OrderManage order)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
-           // order.CreatedDate = DateTime.Now;
-            if (order == null)
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                // order.CreatedDate = DateTime.Now;
+                if (order == null)
+                {
+                    return BadRequest();
+                }
+                var result = _orderService.CreateOrder(order);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else return BadRequest(result);
+            }catch(Exception ex)
             {
-                return BadRequest();
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
             }
-            var result = _orderService.CreateOrder(order);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            else return BadRequest(result);
         }
     }
 }
